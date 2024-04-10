@@ -61,4 +61,16 @@ const handleWordClick = (word: Word) => {
         startCountdownTimer(word);
     }
 };
-// เพิ่มฟังก์ชั่น ล็อกคำศัพท์การทำงานของฟังก์ชันมีดังนี้
+
+
+<div
+    key={word.id}
+    className={`word ${selectedWord && selectedWord.id === word.id ? 'selected' : ''}`}
+    onClick={() => handleWordClick(word)}
+    onContextMenu={(e) => {
+        e.preventDefault();
+        lockWord(word);
+    }}
+>
+    {word.word}
+</div>

@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import data from './word.json';
 import './assignment.css';
+import LockImage from './cloudlock.png';
+import UnlockImage from './cloudunlock.png';
+
 
 interface Word {
     id: number;
     word: string;
     lang: string;
+    locked?: boolean;
 }
+
 const WordCheckList: React.FC = () => {
     const [words, setWords] = useState<Word[]>([]);
     const [thaiWords, setThaiWords] = useState<Word[]>([]);
@@ -15,35 +20,38 @@ const WordCheckList: React.FC = () => {
     const [countdownTimers, setCountdownTimers] = useState<{ [key: number]: number }>({});
     const timerRefs = useRef<{ [key: number]: NodeJS.Timeout }>({});
 
+
     useEffect(() => {
         setWords(data);
     }, []);
 
+    //////////////////////////////////////////// // cooldown//////////////////////////////////////////////////////////////////
 
-    // ////////////////////////////////////////////////////////////////////////////countdown/////////////////////////////////////////////////
     const startCountdownTimer = (word: Word) => {
-        // เริ่มนับในช่องไทยอิ้งตอนย้ายคำไป
         if (!countdownTimers[word.id]) {
+            console.log("countdownTimers")
             setCountdownTimers(prevState => ({ ...prevState, [word.id]: 5 }));
-    
+
             const intervalId = setInterval(() => {
                 setCountdownTimers(prevState => ({
                     ...prevState,
                     [word.id]: prevState[word.id] - 1
                 }));
             }, 1000);
-    
-            // time เหลือ 0 ย้ายคำไทยอิ้งไปช่องคำศัพท์
             const timeoutId = setTimeout(() => {
                 handleWordAutoRemove(word);
                 clearInterval(intervalId);
             }, 5000);
-    
+
             timerRefs.current[word.id] = { intervalId, timeoutId };
+        }else{
+            console.log("what")
+            
         }
     };
+
+    // หยุดนับถอยหลัง
     const stopCountdownTimer = (wordId: number) => {
-        // หยุดcooldownหลังเมื่อคำไทยอิ้งถูกย้ายไปช่องคำศัพท์
         const timer = timerRefs.current[wordId];
         if (timer) {
             clearInterval(timer.intervalId);
@@ -51,21 +59,25 @@ const WordCheckList: React.FC = () => {
             delete timerRefs.current[wordId];
         }
     };
-    // //////////////////////////////////////////////////////////////////////คลิก/////////////////////////////////////////////////////////////////
-    // คลิกคำ
+
+    // ///////////////////////////////////////////////////////// Click คำ ///////////////////////////////////////////////////////////////
+
+    // Click sub shubshub
     const handleWordClick = (word: Word) => {
         if (selectedWord && selectedWord.id === word.id) {
             setSelectedWord(null);
             return;
         }
-    
+
+        if (word.locked) {
+            return;
+        }
         setSelectedWord(word);
-    
-        // อัพเดตสถานะของคำศัพท์ในทุกๆ ช่อง
+        // ลบทิ้งทั้ง 3 ที่
         setWords(prevState => prevState.filter(item => item.id !== word.id));
         setThaiWords(prevState => prevState.filter(item => item.id !== word.id));
         setEnglishWords(prevState => prevState.filter(item => item.id !== word.id));
-    
+        // เซ็ตส่วนของช่อง 'คำศัพท์' 
         if (thaiWords.find(thaiWord => thaiWord.id === word.id)) {
             setWords(prevState => [...prevState, word]);
             setThaiWords(prevState => prevState.filter(item => item.id !== word.id));
@@ -73,38 +85,59 @@ const WordCheckList: React.FC = () => {
             setWords(prevState => [...prevState, word]);
             setEnglishWords(prevState => prevState.filter(item => item.id !== word.id));
         } else {
-            // หาว่าเป็นคำไทยหรืออิ้ง
+
+            // เช็ค lang ย้ายไปช่องตามที่เซ็ค
             if (word.lang === 'TH') {
                 setThaiWords(prevState => [...prevState, word]);
             } else {
                 setEnglishWords(prevState => [...prevState, word]);
             }
         }
-       
-        // หลังย้ายคำศัพท์ก็นับถอยหลัง
+        //    เริ่ม countdown
         if (!countdownTimers[word.id]) {
             startCountdownTimer(word);
         }
-    
     };
-// /////////////////////////////////////////////////////////////////////////////ย้ายกลับเอง////////////////////////////////////////////////
 
-    // ย้ายคำอัตโนมัติ
+    // //////////////////////////////////////////////////// Auto Move คำ //////////////////////////////////////////////////////////////////
+
+    // ย้ายคำอัตโนมัติ  ลบ หา ย้ายไป
     const handleWordAutoRemove = (word: Word) => {
         if (word.lang === 'TH') {
             setThaiWords(prevState => [...prevState, word]);
             setThaiWords(prevState => prevState.filter(item => item.id !== word.id));
-            setWords(prevState => [...prevState, word]); // เซ็ตคำศัพท์ไปที่ช่องคำศัพท์
+            setWords(prevState => [...prevState, word]);
         } else {
-            setEnglishWords(prevState => [...prevState, word]); 
-            setEnglishWords(prevState => prevState.filter(item => item.id !== word.id)); 
-            setWords(prevState => [...prevState, word]); // เหมือนข้างบนแต่เป็นอิ้ง
+            setEnglishWords(prevState => [...prevState, word]);
+            setEnglishWords(prevState => prevState.filter(item => item.id !== word.id));
+            setWords(prevState => [...prevState, word]);
         }
-        stopCountdownTimer(word.id); 
-        delete countdownTimers[word.id]; 
-
+        stopCountdownTimer(word.id);
+        delete countdownTimers[word.id];
     };
-    // ////////////////////////////////////////////////////////////////////////////////////interface////////////////////////////////////////////////////////////
+
+    // //////////////////////////////////////LOCKED ON OH YEAHHH/////////////////////////////////////////////////////////
+
+    // ล็อก&ปลดล็อก
+    const lockWord = (word: Word) => {
+        if (word.locked) {
+            word.locked = false;
+            console.log("unlocked");
+            // if (!countdownTimers[word.id]) {
+                startCountdownTimer(word);
+            // else{
+            // }
+        } else {
+            word.locked = true;
+            if (countdownTimers[word.id]) {
+                stopCountdownTimer(word.id);
+            }
+        }
+        // setSelectedWord(null);
+    };
+
+    // //////////////////////////////////////////////// Returnค่า /////////////////////////////////////////////////////////////////////////////////////////
+
     return (
         <div className="App">
             <div className="header">
@@ -128,10 +161,16 @@ const WordCheckList: React.FC = () => {
                     {thaiWords.map(word => (
                         <div
                             key={word.id}
-                            className="word"
-                            onClick={() => handleWordClick(word)}
+                            className={`word ${word.locked ? 'locked' : ''}`}
+                            onClick={() => !word.locked && handleWordClick(word)}
                         >
                             {word.word} ({countdownTimers[word.id]})
+                            <img
+                                src={word.locked ? LockImage : UnlockImage}
+                                alt={word.locked ? 'Locked' : 'Unlocked'}
+                                className="lock-icon"
+                                onClick={() => lockWord(word)}
+                            />
                         </div>
                     ))}
                 </div>
@@ -139,10 +178,16 @@ const WordCheckList: React.FC = () => {
                     {englishWords.map(word => (
                         <div
                             key={word.id}
-                            className="word"
-                            onClick={() => handleWordClick(word)}
+                            className={`word ${word.locked ? 'locked' : ''}`}
+                            onClick={() => !word.locked && handleWordClick(word)}
                         >
                             {word.word} ({countdownTimers[word.id]})
+                            <img
+                                src={word.locked ? LockImage : UnlockImage}
+                                alt={word.locked ? 'Locked' : 'Unlocked'}
+                                className="lock-icon"
+                                onClick={() => lockWord(word)}
+                            />
                         </div>
                     ))}
                 </div>
@@ -150,4 +195,5 @@ const WordCheckList: React.FC = () => {
         </div>
     );
 };
+
 export default WordCheckList;
