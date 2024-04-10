@@ -1,0 +1,121 @@
+
+body{
+background-color: rgba(243, 243, 243, 0.833);
+}
+.p1{
+    text-align: left;
+    font-size: 30px;
+    width: 2800px;
+    background-color: blue;
+    height: 80px;
+    padding-top:50px;
+    margin-top: 0px;
+    padding-left: 30px;
+}
+img{
+    width: 70px;
+    margin-left: 30px;
+    margin-bottom: -70px;
+
+
+}
+.divall{
+    margin-top: -24%;
+    width: auto;
+    height:auto;
+    position: fixed;
+}
+.postlist{
+    font-size: 30px;
+    margin-left: 30px;
+    color: black;
+
+
+}
+.input{
+    width: 1470px;
+    margin-left: 140px;
+    height:40px;
+    border-radius: 5px;
+    background-color: white;
+    border-color: gray;
+    color: black;
+    font-size: 20px;
+
+    
+
+}
+dl{
+    margin-top: 40px;
+    
+}
+.divinput{
+    background-color: white;
+    height: 135px;
+    width: 1650px;
+    margin-left: 30px;
+    border-radius: 10px;
+    margin-top: 30px;
+
+}
+
+.inputmem{
+    margin-left: 140px;
+    width: 1465px;
+    font-size: 20px;
+    height:40px;
+    border-radius: 5px;
+    margin-top: 25    ;
+    background-color: white;
+    color: black    ;
+    
+}
+.memname{
+    margin-left: 140px;
+    width: 1470px;
+    height:40px;
+    font-size: 20px;
+    border-radius: 5px;
+    color: black;
+    padding-top: 5px;
+}
+.liprofile{
+  
+        background-color: white;
+        height: 135px;
+        width: 1650px;
+        margin-left: 30px;
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        
+}
+
+.addbtn{
+    margin-left: 30px;
+    width: 150px;
+    height: 50px;
+    background-color: blue;
+    margin-left: 1465px;
+    margin-top: 10px;
+
+}
+.editbtn{
+    margin-left: 20px;
+    width: 150px;
+    height: 50px;
+    background-color: rgb(222, 222, 222);
+    color: black;
+    margin-top: 10px;
+    margin-left: 1290px;
+}
+.deletebtn{
+    margin-left: 20px;
+    width: 150px;
+    height: 50px;
+    background-color: rgb(222, 222, 222);
+    color: black;    
+    margin-top: 10px;
+
+}
+

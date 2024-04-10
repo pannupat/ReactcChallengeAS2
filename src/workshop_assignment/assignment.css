@@ -1,0 +1,197 @@
+/* assignment.css */
+
+body {
+    background-image: url("./kuro2.png");
+    font-family:cursive;
+
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.header {
+    display: flex;
+    width: 100%;
+    font-size: larger;
+    justify-content: space-around;
+    padding: 10px 0;
+    background-image: url("./bg.jpg");
+    color: #de22b2;
+    width: 1600px;
+    margin-left: 50px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 5px solid rgba(239, 131, 239, 0.906);
+    font-weight: bolder;
+    font-family: 'Times New Roman', Times, serif;
+
+}
+
+.content {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    height: 700px;
+    width: 1615px;
+    margin-left: 50px;
+    border-radius: 10px;
+    border: 5px solid rgba(239, 131, 239, 0.906);
+    background-image: url("./kuromyme.jpg");
+    background-position-y: -50px;
+    background-position-x: -50px;
+
+
+}
+
+.word-list,
+.thai-list,
+.english-list {
+    flex: 1;
+    margin: 0 10px;
+    padding: 10px;
+    border: 5px solid rgba(182, 59, 182, 0.906);
+    color: #0e0d0d;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.word-list {
+    border-radius: 10px;
+    background-image: url("./bg.jpg");
+
+}
+
+.thai-list {
+    background-image: url("./kuro1.png");
+    background-position-y: -50px;
+    background-position-x: -50px;
+
+
+
+}
+
+.english-list {
+    background-image: url("./kuro1.png");
+    background-position-x: -35px;
+    background-position-y: -50px;
+
+}
+
+.word {
+    margin: 8px 0;
+    padding: 8px 12px;
+    background-color: #fff;
+    border: 5px solid rgba(182, 59, 182, 0.906);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bolder;
+    padding: 15px 40px;
+    border: none;
+    outline: none;
+    color: #ca1ea5;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.word:hover {
+    background-color: #bf4aca;
+    color: white;
+}
+
+.selected {
+    border: 5px solid purple;
+    color: white;
+    background-color: #bd359b;
+    font-weight: 900;
+}
+
+.animated {
+    animation: moveWord 0.5s ease;
+}
+
+@keyframes moveWord {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.word::after {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+/* glow */
+.word::before {
+    content: "";
+    background: linear-gradient(45deg,
+            #a90f88, #ef32d9, #c746ae, #e67cd4,
+            #db56d5, #d62fbf, #FF00C8, #f030cd);
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 600%;
+    z-index: -1;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    filter: blur(8px);
+    animation: glowing 20s linear infinite;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+    opacity: 0;
+}
+
+@keyframes glowing {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 400% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.word:hover::before {
+    opacity: 1;
+
+}
+
+.word:active:after {
+    background: transparent;
+}
+
+.word:active {
+    color: #000;
+    font-weight: bold;
+}
+
+/* test css */
+
+
+

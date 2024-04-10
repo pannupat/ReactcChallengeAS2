@@ -1,0 +1,53 @@
+[
+    {
+        "id":1,
+        "lang": "TH",
+        "word": "ควาย"
+    },
+    {        
+        "id":2,
+        "lang": "TH",
+        "word": "ปลาทอง"
+    },
+    {
+        "id":3,
+        "lang": "EN",
+        "word": "Buffalo"
+    },
+    {
+        "id":4,
+        "lang": "TH",
+        "word": "ม้า"
+    },
+    {
+        "id":5,
+        "lang": "EN",
+        "word": "Goldfish"
+    },
+    {
+        "id":6,
+        "lang": "EN",
+        "word": "Horse"
+    },
+    {
+        "id":7,
+        "lang": "EN",
+        "word": "Rabbit"
+    },
+    {
+        "id":8,
+        "lang": "TH",
+        "word": "กระต่าย"
+    },
+    {
+        "id":9,
+        "lang": "EN",
+        "word": "Sheep"
+    },
+    {
+        "id":10,
+        "lang": "TH",
+        "word": "แกะ"
+    }
+]
+
