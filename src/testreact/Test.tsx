@@ -1,9 +1,11 @@
-import { useState } from "react"
+import { FC } from "react";
 
-export default function Test(){
-    const [count, setCount] = useState(10)
+const Test:FC = () =>{
 
     return(
-        <h1>Count : {count}</h1>
+        <>
+        <h1>pack</h1>
+        h2
+        </>
     )
 }
