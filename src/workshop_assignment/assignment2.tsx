@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import data from './word.json';
 import './assignment.css';
-import LockImage from './cloudlock.png';
-import UnlockImage from './cloudunlock.png';
+import WordItem from '@components/WordItem';
 
 
-interface Word {
+export interface Word {
     id: number;
     word: string;
     lang: string;
@@ -13,130 +12,28 @@ interface Word {
 }
 
 const WordCheckList: React.FC = () => {
-    const [words, setWords] = useState<Word[]>([]);
+    const [words, setWords] = useState<Word[]>(data.map(w => ({ ...w, locked: false })));
     const [thaiWords, setThaiWords] = useState<Word[]>([]);
     const [englishWords, setEnglishWords] = useState<Word[]>([]);
-    const [selectedWord, setSelectedWord] = useState<Word | null>(null);
-    const [countdownTimers, setCountdownTimers] = useState<{ [key: number]: number }>({});
-    const timerRefs = useRef<{ [key: number]: NodeJS.Timeout }>({});
 
-
-    useEffect(() => {
-        setWords(data);
-    }, []);
-
-    //////////////////////////////////////////// // cooldown//////////////////////////////////////////////////////////////////
-
-    const startCountdownTimer = (word: Word) => {
-        if (!countdownTimers[word.id]) {
-            console.log("countdownTimers")
-            setCountdownTimers(prevState => ({ ...prevState, [word.id]: 5 }));
-
-            const intervalId = setInterval(() => {
-                setCountdownTimers(prevState => ({
-                    ...prevState,
-                    [word.id]: prevState[word.id] - 1
-                }));
-            }, 1000);
-            const timeoutId = setTimeout(() => {
-                handleWordAutoRemove(word);
-                clearInterval(intervalId);
-            }, 5000);
-
-            timerRefs.current[word.id] = { intervalId, timeoutId };
-        }else{
-            console.log("what")
-            
+    const addToRight = (word: Word) => {
+        setWords(prev => prev.filter(w => w.id !== word.id))
+        if (word.lang === "TH") {
+            setThaiWords(prev => [...prev, word])
+        } else if (word.lang === "EN") {
+            setEnglishWords(prev => [...prev, word])
         }
-    };
+    }
 
-    // หยุดนับถอยหลัง
-    const stopCountdownTimer = (wordId: number) => {
-        const timer = timerRefs.current[wordId];
-        if (timer) {
-            clearInterval(timer.intervalId);
-            clearTimeout(timer.timeoutId);
-            delete timerRefs.current[wordId];
-        }
-    };
+    const addThaiToLeft = (word: Word) => {
+        setThaiWords(prev => prev.filter(w => w.id !== word.id))
+        setWords(prev => [...prev, word])
+    }
 
-    // ///////////////////////////////////////////////////////// Click คำ ///////////////////////////////////////////////////////////////
-
-    // Click sub shubshub
-    const handleWordClick = (word: Word) => {
-        if (selectedWord && selectedWord.id === word.id) {
-            setSelectedWord(null);
-            return;
-        }
-
-        if (word.locked) {
-            return;
-        }
-        setSelectedWord(word);
-        // ลบทิ้งทั้ง 3 ที่
-        setWords(prevState => prevState.filter(item => item.id !== word.id));
-        setThaiWords(prevState => prevState.filter(item => item.id !== word.id));
-        setEnglishWords(prevState => prevState.filter(item => item.id !== word.id));
-        // เซ็ตส่วนของช่อง 'คำศัพท์' 
-        if (thaiWords.find(thaiWord => thaiWord.id === word.id)) {
-            setWords(prevState => [...prevState, word]);
-            setThaiWords(prevState => prevState.filter(item => item.id !== word.id));
-        } else if (englishWords.find(englishWord => englishWord.id === word.id)) {
-            setWords(prevState => [...prevState, word]);
-            setEnglishWords(prevState => prevState.filter(item => item.id !== word.id));
-        } else {
-
-            // เช็ค lang ย้ายไปช่องตามที่เซ็ค
-            if (word.lang === 'TH') {
-                setThaiWords(prevState => [...prevState, word]);
-            } else {
-                setEnglishWords(prevState => [...prevState, word]);
-            }
-        }
-        //    เริ่ม countdown
-        if (!countdownTimers[word.id]) {
-            startCountdownTimer(word);
-        }
-    };
-
-    // //////////////////////////////////////////////////// Auto Move คำ //////////////////////////////////////////////////////////////////
-
-    // ย้ายคำอัตโนมัติ  ลบ หา ย้ายไป
-    const handleWordAutoRemove = (word: Word) => {
-        if (word.lang === 'TH') {
-            setThaiWords(prevState => [...prevState, word]);
-            setThaiWords(prevState => prevState.filter(item => item.id !== word.id));
-            setWords(prevState => [...prevState, word]);
-        } else {
-            setEnglishWords(prevState => [...prevState, word]);
-            setEnglishWords(prevState => prevState.filter(item => item.id !== word.id));
-            setWords(prevState => [...prevState, word]);
-        }
-        stopCountdownTimer(word.id);
-        delete countdownTimers[word.id];
-    };
-
-    // //////////////////////////////////////LOCKED ON OH YEAHHH/////////////////////////////////////////////////////////
-
-    // ล็อก&ปลดล็อก
-    const lockWord = (word: Word) => {
-        if (word.locked) {
-            word.locked = false;
-            console.log("unlocked");
-            // if (!countdownTimers[word.id]) {
-                startCountdownTimer(word);
-            // else{
-            // }
-        } else {
-            word.locked = true;
-            if (countdownTimers[word.id]) {
-                stopCountdownTimer(word.id);
-            }
-        }
-        // setSelectedWord(null);
-    };
-
-    // //////////////////////////////////////////////// Returnค่า /////////////////////////////////////////////////////////////////////////////////////////
+    const addEnglishToLeft = (word: Word) => {
+        setEnglishWords(prev => prev.filter(w => w.id !== word.id))
+        setWords(prev => [...prev, word])
+    }
 
     return (
         <div className="App">
@@ -150,8 +47,8 @@ const WordCheckList: React.FC = () => {
                     {words.map(word => (
                         <div
                             key={word.id}
-                            className={`word ${selectedWord && selectedWord.id === word.id ? 'selected' : ''}`}
-                            onClick={() => handleWordClick(word)}
+                            className={`word`}
+                            onClick={() => { addToRight(word) }}
                         >
                             {word.word}
                         </div>
@@ -159,36 +56,20 @@ const WordCheckList: React.FC = () => {
                 </div>
                 <div className="thai-list">
                     {thaiWords.map(word => (
-                        <div
+                        <WordItem
                             key={word.id}
-                            className={`word ${word.locked ? 'locked' : ''}`}
-                            onClick={() => !word.locked && handleWordClick(word)}
-                        >
-                            {word.word} ({countdownTimers[word.id]})
-                            <img
-                                src={word.locked ? LockImage : UnlockImage}
-                                alt={word.locked ? 'Locked' : 'Unlocked'}
-                                className="lock-icon"
-                                onClick={() => lockWord(word)}
-                            />
-                        </div>
+                            word={word}
+                            handle={() => { addThaiToLeft(word) }}
+                        />
                     ))}
                 </div>
                 <div className="english-list">
                     {englishWords.map(word => (
-                        <div
+                        <WordItem
                             key={word.id}
-                            className={`word ${word.locked ? 'locked' : ''}`}
-                            onClick={() => !word.locked && handleWordClick(word)}
-                        >
-                            {word.word} ({countdownTimers[word.id]})
-                            <img
-                                src={word.locked ? LockImage : UnlockImage}
-                                alt={word.locked ? 'Locked' : 'Unlocked'}
-                                className="lock-icon"
-                                onClick={() => lockWord(word)}
-                            />
-                        </div>
+                            word={word}
+                            handle={() => { addEnglishToLeft(word) }}
+                        />
                     ))}
                 </div>
             </div>
